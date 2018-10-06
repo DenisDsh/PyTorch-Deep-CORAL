@@ -11,9 +11,8 @@ from utils import accuracy, Tracker
 from coral import coral
 
 
-def train(model, optimizer, source_loader, target_loader, args, epoch=0):
+def train(model, optimizer, source_loader, target_loader, tracker, args, epoch=0):
 
-    tracker = Tracker()
     model.train()
     tracker_class, tracker_params = tracker.MovingMeanMonitor, {'momentum': 0.99}
 
@@ -54,12 +53,11 @@ def train(model, optimizer, source_loader, target_loader, args, epoch=0):
                        coral_loss=fmt(coral_loss_tracker.mean.value))
 
 
-def evaluate(model, data_loader, dataset_name, args, epoch=0):
+def evaluate(model, data_loader, dataset_name, tracker, args, epoch=0):
     model.eval()
 
-    tracker = Tracker()
     tracker_class, tracker_params = tracker.MeanMonitor, {}
-    acc_tracker = tracker.track('accuracy', tracker_class(**tracker_params))
+    acc_tracker = tracker.track('{}_accuracy'.format(dataset_name), tracker_class(**tracker_params))
 
     loader = tqdm(data_loader, desc='{} E{:03d}'.format('Evaluating on %s' % dataset_name, epoch), ncols=0)
 
@@ -99,6 +97,11 @@ def main():
     parser.add_argument('--lambda_coral', default=0.5,
                         help="Weight that trades off the adaptation with "
                              "classification accuracy on the source domain")
+    parser.add_argument('--source', default='amazon',
+                        help="Source Domain (dataset)")
+    parser.add_argument('--target', default='webcam',
+                        help="Target Domain (dataset)")
+
 
     args = parser.parse_args()
     args.device = None
@@ -108,11 +111,11 @@ def main():
     else:
         args.device = torch.device('cpu')
 
-    source_train_loader = get_loader(name_dataset='amazon', batch_size=args.batch_size, train=True)
-    target_train_loader = get_loader(name_dataset='webcam', batch_size=args.batch_size, train=True)
+    source_train_loader = get_loader(name_dataset=args.source, batch_size=args.batch_size, train=True)
+    target_train_loader = get_loader(name_dataset=args.target, batch_size=args.batch_size, train=True)
 
-    source_evaluate_loader = get_loader(name_dataset='amazon', batch_size=args.batch_size, train=False)
-    target_evaluate_loader = get_loader(name_dataset='webcam', batch_size=args.batch_size, train=False)
+    source_evaluate_loader = get_loader(name_dataset=args.source, batch_size=args.batch_size, train=False)
+    target_evaluate_loader = get_loader(name_dataset=args.target, batch_size=args.batch_size, train=False)
 
     n_classes = len(source_train_loader.dataset.classes)
 
@@ -137,11 +140,15 @@ def main():
         {'params': model.classifier[6].parameters(), 'lr': 10 * args.lr}
     ], lr=args.lr, momentum=args.momentum)  # if not specified, the default lr is used
 
+    tracker = Tracker()
+
     for i in range(args.epochs):
         train(model, optimizer, source_train_loader, target_train_loader, args, i)
         evaluate(model, source_evaluate_loader, 'source', args, i)
         evaluate(model, target_evaluate_loader, 'target', args, i)
 
+    # Save logged classification loss, coral loss, source accuracy, target accuracy
+    torch.save(tracker.to_dict(), "log.pth")
 
 if __name__ == '__main__':
     main()
