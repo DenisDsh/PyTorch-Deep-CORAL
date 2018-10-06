@@ -21,7 +21,13 @@ def compute_covariance(input_data):
     """
     n = input_data.size(0)  # batch_size
 
-    id_row = torch.ones(n).resize(1, n)
+    # Check if using gpu or cpu
+    if input_data.is_cuda:
+        device = torch.device('cuda')
+    else:
+        device = torch.device('cpu')
+
+    id_row = torch.ones(n).resize(1, n).to(device=device)
     sum_column = torch.mm(id_row, input_data)
     mean_column = torch.div(sum_column, n)
     term_mul_2 = torch.mm(mean_column.t(), mean_column)
