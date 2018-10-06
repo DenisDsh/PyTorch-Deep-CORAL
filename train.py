@@ -143,9 +143,9 @@ def main():
     tracker = Tracker()
 
     for i in range(args.epochs):
-        train(model, optimizer, source_train_loader, target_train_loader, args, i)
-        evaluate(model, source_evaluate_loader, 'source', args, i)
-        evaluate(model, target_evaluate_loader, 'target', args, i)
+        train(model, optimizer, source_train_loader, target_train_loader, tracker, args, i)
+        evaluate(model, source_evaluate_loader, 'source', tracker, args, i)
+        evaluate(model, target_evaluate_loader, 'target', tracker, args, i)
 
     # Save logged classification loss, coral loss, source accuracy, target accuracy
     torch.save(tracker.to_dict(), "log.pth")
