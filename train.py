@@ -84,7 +84,7 @@ def main():
     parser = argparse.ArgumentParser(description='Train - Evaluate DeepCORAL model')
     parser.add_argument('--disable_cuda', action='store_true',
                         help='Disable CUDA')
-    parser.add_argument('--epochs', type=int, default=20,
+    parser.add_argument('--epochs', type=int, default=50,
                         help='Number of total epochs to run')
     parser.add_argument('--batch_size', type=int, default=128,
                         help='Batch size')
@@ -94,7 +94,7 @@ def main():
                         help='Decay of the learning rate')
     parser.add_argument('--momentum', default=0.9,
                         help="Optimizer's momentum")
-    parser.add_argument('--lambda_coral', default=0.5,
+    parser.add_argument('--lambda_coral', type=float, default=0.5,
                         help="Weight that trades off the adaptation with "
                              "classification accuracy on the source domain")
     parser.add_argument('--source', default='amazon',
