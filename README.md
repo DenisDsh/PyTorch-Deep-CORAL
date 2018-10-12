@@ -49,7 +49,7 @@ mv amazon dslr webcam ./data
 python train.py
 ```
 After each training epoch, the model will be evaluated on source and target and the respective accuracies printed.
-Source and Target accuracies, classification loss and CORAL loss are saved in `./log.pth`
+source and target accuracies, classification loss and CORAL loss are saved in `./log.pth`
 
 - Construct plots:
 ```
