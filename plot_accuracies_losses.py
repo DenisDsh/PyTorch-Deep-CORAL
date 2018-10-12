@@ -79,6 +79,22 @@ def main():
     plt.figure()
     fig_acc.savefig('coral_loss_no_adapt.pdf', dpi=1000)
 
+    # Classification loss and CORAL loss for training w/ CORAL loss
+    plt.gca().set_color_cycle(['red', 'blue'])
+
+    axes = plt.gca()
+    axes.set_ylim([0, 0.5])
+
+    l8, = plt.plot(adapt['classification_loss'], label="classification loss w/ coral loss", marker='.')
+    l9, = plt.plot(no_adapt['classification_loss'], label="classification loss w/o coral loss", marker='*')
+
+    plt.legend(handles=[l8, l9], loc=1)
+
+    fig_acc = plt.gcf()
+    plt.show()
+    plt.figure()
+    fig_acc.savefig('classification_loss.pdf', dpi=1000)
+
 
 if __name__ == '__main__':
     main()
