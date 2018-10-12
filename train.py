@@ -102,7 +102,6 @@ def main():
     parser.add_argument('--target', default='webcam',
                         help="Target Domain (dataset)")
 
-
     args = parser.parse_args()
     args.device = None
 
@@ -149,6 +148,7 @@ def main():
 
     # Save logged classification loss, coral loss, source accuracy, target accuracy
     torch.save(tracker.to_dict(), "log.pth")
+
 
 if __name__ == '__main__':
     main()
