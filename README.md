@@ -25,7 +25,7 @@ To provide results comparable to the paper, have been considered:
 **(a)** CORAL loss significantly improves performances on target domain
  while maintaining almost the same accuracy on source domain.  
 **(b)** Classification loss and CORAL loss while optimizing for both domain invariance and class discrimination.  
-**(c)** CORAL distance without adaptation
+**(c)** CORAL distance without adaptation  
 **(d)** Comparison between adaptation and no adaptation (lambda = 0) classification loss. Without domain adaptation the classification loss decreases slightly faster.
 
 
